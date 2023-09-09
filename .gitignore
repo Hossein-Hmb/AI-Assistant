@@ -3,10 +3,10 @@ config.py
 # Ignore the file test.wav 
 test.wav
 # Ignore the file test2.wav
-tes2.wav
+test2.wav
 # Ignore the file voice11lab.py
 voice11lab.py
-# Ignore the file voice_recording.py
+# Ignore the file voice_recording.wav
 voice_recording.wav
 # Ignore the file voice_recording.webm
 voice_recording.webm
