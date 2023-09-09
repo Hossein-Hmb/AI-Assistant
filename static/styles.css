@@ -1,0 +1,81 @@
+body {
+  background-color: #1f2833;
+  color: #c5c6c7;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  font-family: "Helvetica", "Arial", sans-serif;
+}
+
+.ChatInterface {
+  border: 2px solid #66fcf1;
+  background-color: #0b0c10;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 10px 0;
+  width: 50rem;
+  display: grid;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
+}
+
+.record-controls {
+  display: flex;
+  justify-content: space-between;
+  width: 40%;
+  margin: 10px auto;
+}
+
+h1 {
+  color: #45a29e;
+  text-align: center;
+}
+
+.user-message {
+  font-size: 1.2em;
+  color: #66fcf1;
+  margin: 10px 0;
+}
+
+.assistant-message {
+  font-size: 1.2em;
+  color: #c5c6c7;
+  margin: 10px 0;
+}
+
+.recordBtn {
+  background-color: #45a29e;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  margin: 10px 2px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.recordBtn:hover {
+  background-color: #66fcf1;
+}
+
+.recordBtn:disabled {
+  background-color: #cccccc;
+  color: #262626;
+  cursor: not-allowed;
+}
+
+.language_choice {
+  margin-top: 20px;
+  color: #c5c6c7;
+}
+
+#language {
+  background-color: #0b0c10;
+  color: #c5c6c7;
+  border: 2px solid #66fcf1;
+  padding: 5px;
+  font-size: 1em;
+  border-radius: 5px;
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat with Donna</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <div class="ChatInterface">
+      <h1 class="title">Chat with Your Assistant</h1>
+      <div id="chat"></div>
+      <button class="recordBtn" id="record-btn">Record Voice</button>
+      <button class="recordBtn" id="stop-btn" disabled>Stop Recording</button>
+    </div>
+
+    <script>
+      const recordBtn = document.getElementById("record-btn");
+      const stopBtn = document.getElementById("stop-btn");
+      let mediaRecorder;
+
+      recordBtn.addEventListener("click", () => {
+        recordBtn.disabled = true;
+        stopBtn.disabled = false;
+
+        navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.start();
+
+          const audioChunks = [];
+          mediaRecorder.addEventListener("dataavailable", (event) => {
+            audioChunks.push(event.data);
+          });
+
+          mediaRecorder.addEventListener("stop", () => {
+            const audioData = new Blob(audioChunks, { type: "audio/webm" });
+
+            const formData = new FormData();
+            formData.append("audio_data", audioData);
+
+            fetch("/record", {
+              method: "POST",
+              body: formData,
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                const messageContainer = document.createElement("div");
+
+                const userMessageElem = document.createElement("p");
+                userMessageElem.className = "user-message";
+                userMessageElem.innerHTML = "User: " + data.userPrompt;
+                messageContainer.appendChild(userMessageElem);
+
+                const assistantMessageElem = document.createElement("p");
+                assistantMessageElem.className = "assistant-message";
+                assistantMessageElem.innerHTML = "Donna: " + data.response;
+                messageContainer.appendChild(assistantMessageElem);
+
+                const chatElem = document.querySelector("#chat");
+                chatElem.appendChild(messageContainer);
+
+                // Play the AI response audio
+                const audioData = new Audio(
+                  "data:audio/mp3;base64," + data.response_audio
+                );
+                audioData.play();
+
+                recordBtn.disabled = false;
+                stopBtn.disabled = true;
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+              });
+          });
+        });
+      });
+
+      stopBtn.addEventListener("click", () => {
+        if (mediaRecorder) {
+          mediaRecorder.stop();
+        }
+      });
+    </script>
+  </body>
+</html>
