@@ -1,3 +1,10 @@
-# Ignore the config.py file
+# Ignore these files
 config.py
+test.wav
+tes2.wav
+voice11lab.py
+voice_recording.wav
+voice_recording.webm
+golden-system-385200-bf62ec1f5276.json
+GUI.py
 
