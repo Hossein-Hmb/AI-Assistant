@@ -10,8 +10,8 @@ voice11lab.py
 voice_recording.wav
 # Ignore the file voice_recording.webm
 voice_recording.webm
-# Ignore the file golden-system-385200-bf62ec1f5276.json
-golden-system-385200-bf62ec1f5276.json
+# Ignore the file golden-system-385200-faa36efafbd4.json
+golden-system-385200-faa36efafbd4.json
 # Ignore the file GUI.py
 GUI.py
 
