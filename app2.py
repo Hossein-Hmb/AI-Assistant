@@ -313,7 +313,7 @@ def wake_word_detected(keyword):
         # Convert the chatbot response to audio and play it
         response_audio = text_to_speech(chatbotResponse, chatbot_lang_code)
         # What the chatbot said
-        # print(f"Chatbot said: {response_audio}")
+        print(f"Chatbot said: {response_audio}")
         play_audio(response_audio)
 
 
