@@ -13,10 +13,11 @@ import struct
 import threading
 import queue
 import time
+import GmailAPI
+import re
 ###########################################################################
 # Initialize Google Cloud Text-to-Speech client
 tts_client = texttospeech.TextToSpeechClient()
-
 openai.api_key = config.OPENAI_API_KEY
 porcupine_accesskey = config.PORCUPINE_ACCESSKEY
 wake_word_queue = queue.Queue()
@@ -48,21 +49,15 @@ def transcribeAudio(audio):
 
 
 ###########################################################################
-
-
-"""GPT part of the code"""
-# use transcribeAudio() to transcribe audio, then use the text as a prompt for gpt-4 to generate a text response
-
-
 def gptPrompt(prompt):
     global messages
 
     completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4",
         messages=[
             {
                 "role": "system",
-                "content": "You name is AI, an AI friend for people to talk with.",
+                "content": "Your name is Jarvis. You're an AI assistant that helps with everyday tasks. You can do things like send emails, play music, send messages, and more.",
             },
             {"role": "user", "content": prompt},
         ],
@@ -74,11 +69,8 @@ def gptPrompt(prompt):
 
     return gptResponse
 
+
 ###########################################################################
-
-
-"""Voice Recording part of the code"""
-# Parameters
 duration = 10  # Record for x seconds
 fs = 44100  # Sample rate (44.1 kHz)
 channels = 1  # Use mono
@@ -230,7 +222,7 @@ def porcupine_listener():
                 pcm = audio_stream.read(porcupine.frame_length)
                 pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
 
-                print(f"conversation_in_progress: {conversation_in_progress}")
+                # print(f"conversation_in_progress: {conversation_in_progress}")
 
                 if not conversation_in_progress:
                     keyword_index = porcupine.process(pcm)
@@ -308,11 +300,11 @@ def wake_word_detected(keyword):
         # What the user said
         print(f"User said: {user_voice_data}")
         # If the user says "Stop" or "Thank you", break the loop
-        if "Thank you" in user_voice_data or "Stop" in user_voice_data:
-            print("Stopping command detected. Exiting loop.")
-            # Set the flag to False when the conversation ends
-            conversation_in_progress = False
-            break
+#      if "Thank you" in user_voice_data or "Stop" in user_voice_data:
+      #      print("Stopping command detected. Exiting loop.")
+       #     # Set the flag to False when the conversation ends
+        #    conversation_in_progress = False
+        #   break''
         conversation += f"User: {user_voice_data}\n"
         # Get response from ChatGPT using gptPrompt function
         chatbotResponse = gptPrompt(conversation)
@@ -324,6 +316,44 @@ def wake_word_detected(keyword):
         # print(f"Chatbot said: {response_audio}")
         play_audio(response_audio)
 
+
+###########################################################################
+
+
+def extract_email_details(user_input):
+    # Detect if it's an email command
+    if "write an email to" not in user_input:
+        return None
+
+    # Extract email address
+    email_pattern = re.compile(
+        r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}")
+    email_match = email_pattern.search(user_input)
+    if not email_match:
+        return None
+    email_address = email_match.group()
+
+    # Extract subject
+    subject_match = re.search(r"with the subject of ([^and]+)", user_input)
+    if not subject_match:
+        return None
+    subject = subject_match.group(1).strip()
+
+    # Extract content message to be passed to GPT-4
+    content_match = re.search(r"tell that person that (.+)$", user_input)
+    if not content_match:
+        return None
+    content_prompt = content_match.group(1).strip()
+
+    # Pass the content_prompt to GPT-4 to generate the full content
+    # For this example, we'll assume a function gpt4_generate is available
+    content = gptPrompt(content_prompt)
+
+    return {
+        "recipient": email_address,
+        "subject": subject,
+        "content": content  # or use "content": content if using GPT-4
+    }
 
 ###########################################################################
 
