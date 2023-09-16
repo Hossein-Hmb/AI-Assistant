@@ -14,4 +14,5 @@ voice_recording.webm
 golden-system-385200-faa36efafbd4.json
 # Ignore the file GUI.py
 GUI.py
-
+# Ignore this folder
+save_code/
